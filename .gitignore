@@ -47,3 +47,7 @@ next-env.d.ts
 
 # 開發 log
 /dev.log
+
+# data 打包檔（只透過內網/私下管道傳，不進 repo）
+/crm-data.tar.gz
+/crm-data.zip
