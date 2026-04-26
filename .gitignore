@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 本機資料（含客戶資料、密碼 hash、追蹤紀錄等敏感內容）
+/data/*.json
+/data/*.csv
+/data/import/
+
+# 開發 log
+/dev.log

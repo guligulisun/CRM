@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CRM 看板
 
-## Getting Started
+內部用的 CRM / Pipeline 管理工具，Next.js 16 + TypeScript + Tailwind 4，資料以本機 JSON 檔案儲存。
 
-First, run the development server:
+## 快速啟動
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+開啟 http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+第一次跑會看到 `/login`，但 `data/users.json` 不會在 repo 裡（敏感）。請先建立帳號：
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+node -e "
+const { scryptSync, randomBytes, randomUUID } = require('node:crypto');
+const fs = require('node:fs');
+function hash(p) {
+  const s = randomBytes(16).toString('hex');
+  return s + ':' + scryptSync(p, s, 64).toString('hex');
+}
+const APP_PAGES = ['/','/projects','/ai-projects','/channel','/dev-list','/customers','/products','/settings'];
+fs.mkdirSync('data', { recursive: true });
+fs.writeFileSync('data/users.json', JSON.stringify([{
+  id: randomUUID(),
+  username: 'jimmy',
+  passwordHash: hash('MySight360'),
+  isAdmin: true,
+  allowedPages: APP_PAGES,
+}], null, 2));
+console.log('done');
+"
+```
 
-## Learn More
+接著用 `jimmy` / `MySight360` 登入。
 
-To learn more about Next.js, take a look at the following resources:
+## 環境變數（建議 production）
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`.env.local`：
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+AUTH_SECRET=長一點的隨機字串
+```
 
-## Deploy on Vercel
+不設的話 cookie 會用程式裡的 dev secret 簽，可能被偽造。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 資料
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+所有資料存在 `data/` 下的 JSON 檔。`.gitignore` 已排除這些檔案，每個環境各自管理。
